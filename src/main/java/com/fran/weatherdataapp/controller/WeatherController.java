@@ -36,4 +36,25 @@ public class WeatherController {
         return ResponseEntity.ok(weatherService.getCachedWeatherData());
     }
 
+    @GetMapping("/compare")
+    public ResponseEntity<String> compareTemperatures(@RequestParam String city1, @RequestParam String city2) {
+        String result = weatherService.compareTemperatures(city1, city2);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/hottest")
+    public ResponseEntity<String> getHottestCity() {
+        return ResponseEntity.ok(weatherService.getHottestCity());
+    }
+
+    @GetMapping("/coldest")
+    public ResponseEntity<String> getColdestCity() {
+        return ResponseEntity.ok(weatherService.getColdestCity());
+    }
+
+    @GetMapping("/average")
+    public ResponseEntity<String> getAverageTemperature() {
+        return ResponseEntity.ok(weatherService.getAverageTemperature());
+    }
+
 }

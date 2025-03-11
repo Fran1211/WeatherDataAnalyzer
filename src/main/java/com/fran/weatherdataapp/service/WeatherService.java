@@ -28,7 +28,7 @@ public class WeatherService {
 
         if (response != null && response.getMain() != null) {
             Double temp = response.getMain().getTemp();
-            weatherCache.put(city, temp);  // Cache result
+            weatherCache.put(city, temp);
             return temp;
         }
         return null;
@@ -47,5 +47,47 @@ public class WeatherService {
 
     public Map<String, Double> getCachedWeatherData() {
         return weatherCache;
+    }
+
+
+    public String compareTemperatures(String city1, String city2) {
+        Double temp1 = weatherCache.get(city1);
+        Double temp2 = weatherCache.get(city2);
+
+        if (temp1 == null || temp2 == null) {
+            return "Temperature data not available for one or both cities.";
+        }
+
+        double difference = Math.abs(temp1 - temp2);
+        if (temp1 > temp2) {
+            return String.format("%s is hotter than %s by %.2f°F", city1, city2, difference);
+        } else if (temp1 < temp2) {
+            return String.format("%s is colder than %s by %.2f°F", city1, city2, difference);
+        } else {
+            return String.format("%s and %s have the same temperature: %.2f°F", city1, city2, temp1);
+        }
+    }
+
+    public String getHottestCity() {
+        return weatherCache.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(entry -> String.format("Hottest city: %s with %.2f°F", entry.getKey(), entry.getValue()))
+                .orElse("No data available.");
+    }
+
+    public String getColdestCity() {
+        return weatherCache.entrySet().stream()
+                .min(Map.Entry.comparingByValue())
+                .map(entry -> String.format("Coldest city: %s with %.2f°F", entry.getKey(), entry.getValue()))
+                .orElse("No data available.");
+    }
+
+    public String getAverageTemperature() {
+        if (weatherCache.isEmpty()) {
+            return "No data available.";
+        }
+
+        double average = weatherCache.values().stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        return String.format("Average temperature across %d cities: %.2f°F", weatherCache.size(), average);
     }
 }
